@@ -1,0 +1,42 @@
+
+media:
+  input: img
+  output: img
+
+content:
+  - name: site-settings
+    label: Site Settings
+    type: file
+    path: data/site.yml
+    format: yaml
+    fields:
+      - name: site_title
+        label: Site Title
+        type: string
+      - name: welcome_text
+        label: Welcome Text
+        type: string
+      - name: profile_name
+        label: Profile Name
+        type: string
+      - name: profile_image
+        label: Profile Image
+        type: image
+      - name: banner_image
+        label: Banner Image
+        type: image
+      - name: bio
+        label: About Me
+        type: text
+      - name: navigation
+        label: Navigation Links
+        type: object
+        list: true
+        fields:
+          - name: title
+            label: Link Title
+            type: string
+          - name: url
+            label: Link URL
+            type: string
+            

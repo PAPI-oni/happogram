@@ -1,7 +1,18 @@
 <!DOCTYPE html><html><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>the web site of meeeee :3</title>
+
+<style>
+  html.site-settings-loading body {
+    visibility: hidden;
+  }
+</style>
+
+<script>
+  document.documentElement.classList.add('site-settings-loading');
+</script>
+
+<title>the web site of meeeee :3</title>
     <link href="css/page.css" rel="stylesheet" type="text/css" media="all">
   </head>
   <body>
@@ -169,21 +180,42 @@
 </div>
 
 	  
+
 <script src="https://cdn.jsdelivr.net/npm/js-yaml@4/dist/js-yaml.min.js"></script>
 <script>
 (async function () {
   try {
-    const response = await fetch('data/site.yml');
-    if (!response.ok) return;
+    
+const controller = new AbortController();
+const timeout = setTimeout(() => controller.abort(), 5000);
+
+let response;
+
+try {
+  response = await fetch('data/site.yml', {
+    signal: controller.signal,
+    cache: 'no-cache'
+  });
+} finally {
+  clearTimeout(timeout);
+}
+
+    if (!response.ok) {
+      throw new Error('Could not load data/site.yml');
+    }
 
     const settings = jsyaml.load(await response.text());
-    if (!settings) return;
+    if (!settings) {
+      throw new Error('Site settings are empty');
+    }
 
     if (settings.site_title) {
       document.title = settings.site_title;
     }
 
-    const welcome = document.querySelector('.item2 > div[align="center"] .header');
+    const welcome = document.querySelector(
+      '.item2 > div[align="center"] .header'
+    );
     if (welcome && settings.welcome_text) {
       welcome.textContent = settings.welcome_text;
     }
@@ -208,17 +240,22 @@
       banner.style.backgroundImage =
         'url("' + settings.banner_image + '")';
     }
-	  
-    // Connect sidebar navigation to Pages CMS
+
     const sidebar = document.querySelector('.item3');
+
     if (sidebar && Array.isArray(settings.navigation)) {
       const heading = Array.from(sidebar.querySelectorAll('b'))
-        .find(el => el.textContent.trim().toLowerCase() === 'navigation');
+        .find(el =>
+          el.textContent.trim().toLowerCase() === 'navigation'
+        );
 
       if (heading) {
         let node = heading.nextSibling;
 
-        while (node && !(node.nodeType === 1 && node.tagName === 'HR')) {
+        while (
+          node &&
+          !(node.nodeType === 1 && node.tagName === 'HR')
+        ) {
           const next = node.nextSibling;
           node.remove();
           node = next;
@@ -240,13 +277,19 @@
 
         heading.after(fragment);
       }
-	}
-	  
+    }
+
   } catch (error) {
     console.error('HappoGram settings:', error);
+
+  } finally {
+    document.documentElement.classList.remove(
+      'site-settings-loading'
+    );
   }
 })();
-	</script>
+		  </script>
+	  
 	  
 
 </body></html>

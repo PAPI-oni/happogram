@@ -167,6 +167,52 @@
     </div>
 </div>
 </div>
-  
+
+	  
+<script src="https://cdn.jsdelivr.net/npm/js-yaml@4/dist/js-yaml.min.js"></script>
+<script>
+(async function () {
+  try {
+    const response = await fetch('data/site.yml');
+    if (!response.ok) return;
+
+    const settings = jsyaml.load(await response.text());
+    if (!settings) return;
+
+    if (settings.site_title) {
+      document.title = settings.site_title;
+    }
+
+    const welcome = document.querySelector('.item2 > div[align="center"] .header');
+    if (welcome && settings.welcome_text) {
+      welcome.textContent = settings.welcome_text;
+    }
+
+    const profile = document.getElementById('statuscafe-username');
+    if (profile && settings.profile_name) {
+      profile.textContent = settings.profile_name;
+    }
+
+    const bio = document.querySelector('.item2 p');
+    if (bio && settings.bio) {
+      bio.textContent = settings.bio;
+    }
+
+    const profileImage = document.querySelector('.item5 img');
+    if (profileImage && settings.profile_image) {
+      profileImage.src = settings.profile_image;
+    }
+
+    const banner = document.querySelector('.item1');
+    if (banner && settings.banner_image) {
+      banner.style.backgroundImage =
+        'url("' + settings.banner_image + '")';
+    }
+  } catch (error) {
+    console.error('HappoGram settings:', error);
+  }
+})();
+	</script>
+	  
 
 </body></html>

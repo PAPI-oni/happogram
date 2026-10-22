@@ -208,6 +208,40 @@
       banner.style.backgroundImage =
         'url("' + settings.banner_image + '")';
     }
+	  
+    // Connect sidebar navigation to Pages CMS
+    const sidebar = document.querySelector('.item3');
+    if (sidebar && Array.isArray(settings.navigation)) {
+      const heading = Array.from(sidebar.querySelectorAll('b'))
+        .find(el => el.textContent.trim().toLowerCase() === 'navigation');
+
+      if (heading) {
+        let node = heading.nextSibling;
+
+        while (node && !(node.nodeType === 1 && node.tagName === 'HR')) {
+          const next = node.nextSibling;
+          node.remove();
+          node = next;
+        }
+
+        const fragment = document.createDocumentFragment();
+
+        settings.navigation.forEach(item => {
+          if (!item.title || !item.url) return;
+
+          fragment.append(document.createTextNode('♡ '));
+
+          const link = document.createElement('a');
+          link.textContent = item.title;
+          link.href = item.url;
+
+          fragment.append(link, document.createElement('br'));
+        });
+
+        heading.after(fragment);
+      }
+	}
+	  
   } catch (error) {
     console.error('HappoGram settings:', error);
   }
